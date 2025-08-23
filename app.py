@@ -1,16 +1,24 @@
 import plotly.express as px
-import pandas as pd
-import plotly.graph_objects as go  # Importación de plotly.graph_objects como go
+import plotly.graph_objects as go
+import pandas as pd  # Importación de plotly.graph_objects como go
 import streamlit as st
 
 # Leer los datos del archivo CSV
-car_data = pd.read_csv('vehicles_us.csv')
+df = pd.read_csv('vehicles_us.csv')
 
+st.title("SPRINT 7\n")
+st.header("VEICLES US")
+# leer dataset
 
-df = pd.DataFrame({
-    "Animal": ["Perro", "Gato", "Loro", "Pez"],
-    "Cantidad": [10, 15, 7, 3]
-})
+lista = df.columns.tolist()
 
-fig = px.bar(df, x="Animal", y="Cantidad", title="Cantidad de animales")
-fig.show()  # Abre el gráfico en el navegador
+numeric_cols = df.select_dtypes(include='number').columns.tolist()
+columna_seleccionada = st.selectbox("Selecciona columna:", numeric_cols)
+
+if st.button("Generar Histograma"):
+    nbins = st.slider("Número de bins", 10, 100, 50)
+    st.session_state.nbins = True
+
+    fig = px.histogram(df, x=columna_seleccionada, nbins=nbins,
+                       title=f"Distribución de {columna_seleccionada}")
+    st.plotly_chart(fig)
